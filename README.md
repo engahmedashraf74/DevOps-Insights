@@ -1,7 +1,9 @@
 # DevOps-Insights
 
-> 📎 Project Name : E-Commerce Platform 
+> 📎 Project Name : E-Commerce Platform
+> 
 > 📌 Project Overview: Microservices Project
+> 
 > 👥 Team Members:
  1- Ahmed Ashraf
  2- Mohamed Abu Elhassan

@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
@@ -76,7 +76,7 @@ async function startServer() {
       query('maxPrice').optional().isFloat({ min: 0 }).withMessage('Max price must be a positive number'),
       query('sortBy').optional().isIn(['relevance', 'price_asc', 'price_desc', 'rating', 'newest']).withMessage('Invalid sort option'),
       handleValidationErrors
-    ], async (req, res) => {
+    ], async (req: Request, res: Response) => {
       try {
         const {
           q,
@@ -131,7 +131,7 @@ async function startServer() {
       query('q').notEmpty().withMessage('Search query is required'),
       query('limit').optional().isInt({ min: 1, max: 10 }).withMessage('Limit must be between 1 and 10'),
       handleValidationErrors
-    ], async (req, res) => {
+    ], async (req: Request, res: Response) => {
       try {
         const { q, limit = 5 } = req.query;
         const suggestions = await searchService.getSearchSuggestions(q as string, parseInt(limit as string));
@@ -159,7 +159,7 @@ async function startServer() {
       body('productId').notEmpty().withMessage('Product ID is required'),
       body('productData').isObject().withMessage('Product data is required'),
       handleValidationErrors
-    ], async (req, res) => {
+    ], async (req: Request, res: Response) => {
       try {
         const { productId, productData } = req.body;
         await searchService.indexProduct(productId, productData);

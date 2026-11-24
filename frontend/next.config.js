@@ -180,8 +180,7 @@ const nextConfig = {
   },
   
   // Output configuration for deployment
-  // output: 'standalone', // Commented out for Vercel deployment
-  
+  output: 'standalone',
   // PWA configuration (requires next-pwa plugin)
   // pwa: {
   //   dest: 'public',

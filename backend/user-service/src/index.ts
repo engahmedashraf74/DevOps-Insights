@@ -1,3 +1,4 @@
+
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -14,6 +15,8 @@ async function startServer() {
       uri: process.env.MONGODB_URI || 'mongodb://localhost:27017/apnidukaan',
       dbName: 'user_db'
     });
+
+    const { default: authRouter } = await import('./routes/auth');
 
     // Security middleware
     app.use(helmet({
@@ -71,30 +74,7 @@ async function startServer() {
       });
     });
 
-    app.post('/api/auth/login', (req, res) => {
-      const { email, password } = req.body;
-      // Mock authentication
-      res.json({
-        success: true,
-        data: {
-          token: 'mock-jwt-token',
-          user: { id: 1, email, name: 'User Name' }
-        }
-      });
-    });
-
-    app.post('/api/auth/register', (req, res) => {
-      const { email, password, name } = req.body;
-      // Mock registration
-      res.json({
-        success: true,
-        data: {
-          token: 'mock-jwt-token',
-          user: { id: 1, email, name }
-        }
-      });
-    });
-
+    app.use('/api/auth', authRouter);
     // Global error handler
     app.use((error: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
       logger.error('Unhandled error', {

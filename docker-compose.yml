@@ -52,7 +52,7 @@ services:
       - apnidukaan-network
 
   cart-service:
-    image: muhammedhassan21/apnidukaan-cart-service:v1
+    image: muhammedhassan21/apnidukaan-cart-service:latest
     container_name: apnidukaan-cart
     restart: unless-stopped
     ports:
@@ -71,7 +71,7 @@ services:
       - apnidukaan-network
 
   api-gateway:
-    image: muhammedhassan21/apnidukaan-api-gateway:v1
+    image: muhammedhassan21/apnidukaan-api-gateway:latest
     container_name: apnidukaan-api-gateway
     restart: unless-stopped
     ports:
@@ -89,7 +89,7 @@ services:
       - apnidukaan-network
 
   frontend:
-    image: muhammedhassan21/apnidukaan-frontend:v1
+    image: muhammedhassan21/apnidukaan-frontend:latest
     container_name: apnidukaan-frontend
     restart: unless-stopped
     ports:
@@ -103,7 +103,7 @@ services:
       - apnidukaan-network
 
   catalog-service:
-    image: muhammedhassan21/apnidukaan-catalog-service:v1
+    image: muhammedhassan21/apnidukaan-catalog-service:latest
     container_name: apnidukaan-catalog
     restart: unless-stopped
     ports:
@@ -124,7 +124,7 @@ services:
       - apnidukaan-network
 
   order-service:
-    image: muhammedhassan21/apnidukaan-order-service:v1
+    image: muhammedhassan21/apnidukaan-order-service:latest
     container_name: apnidukaan-order
     restart: unless-stopped
     ports:
@@ -137,7 +137,7 @@ services:
       - apnidukaan-network
 
   payment-service:
-    image: muhammedhassan21/apnidukaan-payment-service:v1
+    image: muhammedhassan21/apnidukaan-payment-service:latest
     container_name: apnidukaan-payment
     restart: unless-stopped
     ports:
@@ -150,7 +150,7 @@ services:
       - apnidukaan-network
 
   search-service:
-    image: muhammedhassan21/apnidukaan-search-service:v1
+    image: muhammedhassan21/apnidukaan-search-service:latest
     container_name: apnidukaan-search
     restart: unless-stopped
     ports:
@@ -166,7 +166,7 @@ services:
       - apnidukaan-network
 
   notification-service:
-    image: muhammedhassan21/apnidukaan-notification-service:v1
+    image: muhammedhassan21/apnidukaan-notification-service:latest
     container_name: apnidukaan-notification
     restart: unless-stopped
     ports:
@@ -190,7 +190,7 @@ services:
       - apnidukaan-network
 
   order-management-service:
-    image: muhammedhassan21/apnidukaan-order-management-service:v1
+    image: muhammedhassan21/apnidukaan-order-management-service:latest
     container_name: apnidukaan-order-management
     restart: unless-stopped
     ports:
@@ -209,7 +209,7 @@ services:
       - apnidukaan-network
 
   user-service:
-    image: muhammedhassan21/apnidukaan-user-service:v1
+    image: muhammedhassan21/apnidukaan-user-service:latest
     container_name: apnidukaan-user
     restart: unless-stopped
     ports:

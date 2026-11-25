@@ -22,10 +22,10 @@ const PORT = process.env.PORT || 4005;
   try {
     // Connect to MongoDB
     const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/apnidukaan_cart';
-    await connectDatabase({
-      uri: mongoUri,
-      dbName: 'cart_db'
-    });
+    const mongoConnection = await connectDatabase({
+  uri: mongoUri,
+  dbName: 'cart_db'
+});
 
     // Connect to Redis (optional)
     let redisClient = null;
@@ -141,7 +141,7 @@ const PORT = process.env.PORT || 4005;
         timestamp: new Date().toISOString(),
         uptime: process.uptime(),
         environment: process.env.NODE_ENV || 'development',
-        mongodb: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+        mongodb: mongoConnection.readyState === 1 ? 'connected' : 'disconnected',
         redis: redisClient ? (redisClient.isReady ? 'connected' : 'disconnected') : 'not_configured'
       });
     });

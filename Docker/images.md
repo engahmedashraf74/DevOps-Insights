@@ -27,4 +27,5 @@
 ## Registry Status
 
 - Application images built locally.
-- Docker Hub publishing is pending.
+- Docker Hub publishing is ready.
+- https://hub.docker.com/u/muhammedhassan21?utm_source=chatgpt.com

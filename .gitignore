@@ -131,7 +131,6 @@ ehthumbs.db
 Thumbs.db
 
 # Docker
-.dockerignore
 docker-compose.override.yml
 
 # Build outputs

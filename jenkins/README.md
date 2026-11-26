@@ -27,8 +27,6 @@ A declarative Jenkins pipeline that builds Docker images for all ApniDukaan micr
 
 ## Pipeline Diagram
 
-Add a screenshot of the Jenkins Stage View or the draw.io diagram here:
-
 ![Pipeline](pipeline.png)
 
 ```

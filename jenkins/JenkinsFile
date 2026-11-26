@@ -1,0 +1,193 @@
+
+pipeline {
+    agent any
+
+    options {
+        skipDefaultCheckout(true)
+    }
+
+    environment {
+        AWS_REGION = 'eu-central-1'
+        AWS_DEFAULT_REGION = 'eu-central-1'
+        AWS_ACCOUNT_ID = '661609780585'
+
+        ECR_REGISTRY = '661609780585.dkr.ecr.eu-central-1.amazonaws.com'
+
+        AWS_PAGER = ''
+
+        SERVICES = 'api-gateway cart-service catalog-service notification-service order-management-service order-service payment-service search-service user-service frontend'
+    }
+
+    triggers {
+        pollSCM('* * * * *')
+    }
+
+    stages {
+
+        // 1. Checkout
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/engahmedashraf74/DevOps-Insights.git'
+            }
+        }
+
+        // 2. Build All Microservices
+        stage('Build All Microservices') {
+            steps {
+                sh '''
+                    set -e
+
+                    for service in $SERVICES
+                    do
+                        echo "=================================="
+                        echo "Building apnidukaan-$service:latest"
+                        echo "=================================="
+
+                        if [ "$service" = "frontend" ]; then
+                            docker build \
+                                -t "apnidukaan-$service:latest" \
+                                -f frontend/Dockerfile \
+                                frontend
+                        else
+                            docker build \
+                                -t "apnidukaan-$service:latest" \
+                                -f "backend/$service/Dockerfile" \
+                                .
+                        fi
+                    done
+
+                    echo "All Docker images built successfully!"
+                '''
+            }
+        }
+
+        // 3. Login To ECR
+        stage('Login To ECR') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'aws-ecr-credentials',
+                        usernameVariable: 'AWS_ACCESS_KEY_ID',
+                        passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                    )
+                ]) {
+                    sh '''
+                        set -e
+
+                        echo "Checking AWS identity..."
+
+                        ACTUAL_ACCOUNT=$(aws sts get-caller-identity \
+                            --query Account \
+                            --output text)
+
+                        if [ "$ACTUAL_ACCOUNT" != "$AWS_ACCOUNT_ID" ]; then
+                            echo "ERROR: Incorrect AWS account!"
+                            exit 1
+                        fi
+
+                        echo "Logging in to Amazon ECR..."
+
+                        aws ecr get-login-password \
+                            --region "$AWS_REGION" | \
+                        docker login \
+                            --username AWS \
+                            --password-stdin \
+                            "$ECR_REGISTRY"
+
+                        echo "ECR login successful!"
+                    '''
+                }
+            }
+        }
+
+        // 4. Tag Images
+        stage('Tag Images') {
+            steps {
+                sh '''
+                    set -e
+
+                    for service in $SERVICES
+                    do
+                        echo "Tagging $service:latest"
+
+                        docker tag \
+                            "apnidukaan-$service:latest" \
+                            "$ECR_REGISTRY/apnidukaan-$service:latest"
+                    done
+
+                    echo "All images tagged successfully!"
+                '''
+            }
+        }
+
+        // 5. Push Images To ECR
+        stage('Push Images To ECR') {
+            steps {
+                sh '''
+                    set -e
+
+                    for service in $SERVICES
+                    do
+                        echo "=================================="
+                        echo "Pushing $service:latest"
+                        echo "=================================="
+
+                        docker push \
+                            "$ECR_REGISTRY/apnidukaan-$service:latest"
+                    done
+
+                    echo "All images pushed successfully!"
+                '''
+            }
+        }
+
+        // 6. Verify Images
+        stage('Verify Images') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'aws-ecr-credentials',
+                        usernameVariable: 'AWS_ACCESS_KEY_ID',
+                        passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                    )
+                ]) {
+                    sh '''
+                        set -e
+
+                        for service in $SERVICES
+                        do
+                            echo "Verifying $service:latest"
+
+                            aws ecr describe-images \
+                                --repository-name "apnidukaan-$service" \
+                                --image-ids imageTag=latest \
+                                --region "$AWS_REGION" \
+                                > /dev/null
+
+                            echo "$service verified successfully!"
+                        done
+
+                        echo "All images verified successfully in ECR!"
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            sh '''
+                docker logout "$ECR_REGISTRY" >/dev/null 2>&1 || true
+            '''
+        }
+
+        success {
+            echo 'ApniDukaan Build and Push completed successfully!'
+        }
+
+        failure {
+            echo 'Pipeline failed! Check the failed stage.'
+        }
+    }
+}
